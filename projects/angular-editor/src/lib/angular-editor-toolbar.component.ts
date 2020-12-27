@@ -117,7 +117,8 @@ export class AngularEditorToolbarComponent {
 
   @Input() id: string;
   @Input() uploadUrl: string;
-  @Input() upload: (file: File) => Observable<HttpEvent<UploadResponse>>;
+  @Input() upload: (file: File) => Observable<string>;
+  @Input() attach: () => void;
   @Input() showToolbar: boolean;
   @Input() fonts: SelectOption[] = [{label: '', value: ''}];
 
@@ -150,9 +151,12 @@ export class AngularEditorToolbarComponent {
 
   @ViewChild('fileInput', {static: true}) myInputFile: ElementRef;
 
+  /*
   public get isLinkButtonDisabled(): boolean {
     return this.htmlMode || !Boolean(this.editorService.selectedText);
   }
+  */
+  public isLinkButtonDisabled: false;
 
   constructor(
     private r: Renderer2,
@@ -248,7 +252,7 @@ export class AngularEditorToolbarComponent {
    * insert URL link
    */
   insertUrl() {
-    let url = 'https:\/\/';
+    let url = '';
     const selection = this.editorService.savedSelection;
     if (selection && selection.commonAncestorContainer.parentElement.nodeName === 'A') {
       const parent = selection.commonAncestorContainer.parentElement as HTMLAnchorElement;
@@ -256,9 +260,16 @@ export class AngularEditorToolbarComponent {
         url = parent.href;
       }
     }
-    url = prompt('Insert URL link', url);
-    if (url && url !== '' && url !== 'https://') {
-      this.editorService.createLink(url);
+
+    url = prompt('Ingrese el vínculo', url);
+
+    if (url) {
+      url = url.trim();
+      if (!url || url.toLowerCase().indexOf('http') !== 0) {
+        alert("El link ingresado no es válido. No se creó el vínculo.")
+      } else {
+        this.editorService.createLink(url);
+      }
     }
   }
 
@@ -267,9 +278,14 @@ export class AngularEditorToolbarComponent {
    */
   insertVideo() {
     this.execute.emit('');
-    const url = prompt('Insert Video link', `https://`);
-    if (url && url !== '' && url !== `https://`) {
-      this.editorService.insertVideo(url);
+    let url = prompt('Ingrese el link del video de Youtube o Vimeo', '');
+    if (url) {
+      url = url.trim();
+      if (!url || url.toLowerCase().indexOf('http') !== 0) {
+        alert("El link ingresado no es válido. No se creó el vínculo.")
+      } else {
+        this.editorService.insertVideo(url);
+      }
     }
   }
 
@@ -311,14 +327,23 @@ export class AngularEditorToolbarComponent {
     this.htmlMode = m;
   }
 
+  clickAttach() {
+
+    if (this.attach) this.attach();
+  }
+
   /**
    * Upload image when file is selected.
    */
   onFileChanged(event) {
+    if (!event.target.files || !event.target.files.length) return;
+
     const file = event.target.files[0];
     if (file.type.includes('image/')) {
         if (this.upload) {
-          this.upload(file).subscribe(() => this.watchUploadImage);
+          this.upload(file).subscribe( (imageUrl: string) => {
+            this.editorService.insertImage(imageUrl);
+          });
         } else if (this.uploadUrl) {
             this.editorService.uploadImage(file).subscribe(() => this.watchUploadImage);
         } else {
@@ -370,6 +395,6 @@ export class AngularEditorToolbarComponent {
 
   focus() {
     this.execute.emit('focus');
-    console.log('focused');
+    //console.log('focused');
   }
 }

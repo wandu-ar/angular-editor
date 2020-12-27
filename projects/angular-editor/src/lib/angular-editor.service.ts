@@ -42,7 +42,8 @@ export class AngularEditorService {
     if (!url.includes('http')) {
       this.doc.execCommand('createlink', false, url);
     } else {
-      const newUrl = '<a href="' + url + '" target="_blank">' + this.selectedText + '</a>';
+      let link = this.selectedText ? this.selectedText : url;
+      const newUrl = '<a href="' + url + '" target="_blank">' + link + '</a>';
       this.insertHtml(newUrl);
     }
   }
@@ -188,23 +189,54 @@ export class AngularEditorService {
   }
 
   insertVideo(videoUrl: string) {
-    if (videoUrl.match('www.youtube.com')) {
+    let match = false;
+
+    if (videoUrl.match('youtube.com')) {
+      match = true;
       this.insertYouTubeVideoTag(videoUrl);
     }
+    if (videoUrl.match('youtu.be')) {
+      match = true;
+      this.insertYouTubeAltVideoTag(videoUrl);
+    }
     if (videoUrl.match('vimeo.com')) {
+      match = true;
       this.insertVimeoVideoTag(videoUrl);
+    }
+
+    if (!match) {
+      alert("El vinculo ingresado no es válido. Sólo se aceptan links a videos de Youtube o Vimeo.");
     }
   }
 
-  private insertYouTubeVideoTag(videoUrl: string): void {
-    const id = videoUrl.split('v=')[1];
+  private insertYouTubeAltVideoTag(videoUrl: string): void {
+    const id = videoUrl.split('/')[3];
     const imageUrl = `https://img.youtube.com/vi/${id}/0.jpg`;
     const thumbnail = `
       <div style='position: relative'>
         <img style='position: absolute; left:200px; top:140px'
              src="https://img.icons8.com/color/96/000000/youtube-play.png"/>
         <a href='${videoUrl}' target='_blank'>
-          <img src="${imageUrl}" alt="click to watch"/>
+          <img src="${imageUrl}" alt="Ver video"/>
+        </a>
+      </div>`;
+    this.insertHtml(thumbnail);
+  }
+
+  private insertYouTubeVideoTag(videoUrl: string): void {
+
+    let id = videoUrl.split('v=')[1];
+    let amp = id.indexOf('&');
+    if (amp > 0) {
+      id = id.substr(0, amp);
+    }
+    const imageUrl = `https://img.youtube.com/vi/${id}/0.jpg`;
+    const thumbnail = `
+      <div style='position: relative'>
+        <img style='position: absolute; left:200px; top:140px'
+             src="https://img.icons8.com/color/96/000000/youtube-play.png"/>
+        <a href='${videoUrl}' target='_blank'>
+          <img src="${imageUrl}" alt="Ver video"/>
         </a>
       </div>`;
     this.insertHtml(thumbnail);
