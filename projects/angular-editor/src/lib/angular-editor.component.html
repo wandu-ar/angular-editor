@@ -21,9 +21,9 @@
      ></angular-editor-toolbar>
 
      <div
-          class="angular-editor-wrapper"
-          #editorWrapper
-     >
+        class="angular-editor-wrapper"
+        #editorWrapper
+        >
           <div
                #editor
                class="angular-editor-textarea"
@@ -35,6 +35,7 @@
                [style.minHeight]="config.minHeight"
                [style.maxHeight]="config.maxHeight"
                [style.outline]="config.outline === false ? 'none': undefined"
+               (paste)="onPaste($event)"
                (input)="onContentChange($event.target)"
                (focus)="onTextAreaFocus($event)"
                (blur)="onTextAreaBlur($event)"

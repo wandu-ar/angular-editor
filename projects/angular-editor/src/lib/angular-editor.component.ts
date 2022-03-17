@@ -14,6 +14,7 @@ import {
   OnInit,
   Output,
   Renderer2,
+  Sanitizer,
   SecurityContext,
   ViewChild
 } from '@angular/core';
@@ -24,6 +25,9 @@ import {AngularEditorService} from './angular-editor.service';
 import {DOCUMENT} from '@angular/common';
 import {DomSanitizer} from '@angular/platform-browser';
 import {isDefined} from './utils';
+
+import * as sanitizeHtml_ from 'sanitize-html';
+const sanitizeHtml = sanitizeHtml_;
 
 @Component({
   selector: 'angular-editor',
@@ -204,6 +208,7 @@ export class AngularEditorComponent implements OnInit, ControlValueAccessor, Aft
       html = '';
     }
     if (typeof this.onChange === 'function') {
+
       this.onChange(this.config.sanitize || this.config.sanitize === undefined ?
         this.sanitizer.sanitize(SecurityContext.HTML, html) : html);
       if ((!html) !== this.showPlaceholder) {
@@ -415,5 +420,66 @@ export class AngularEditorComponent implements OnInit, ControlValueAccessor, Aft
   filterStyles(html: string): string {
     html = html.replace('position: fixed;', '');
     return html;
+  }
+
+  onPaste(event: any) {
+
+    // El problema que encontre que dataTransferItem.getAsString no es async sino callback,
+    // por eso no puedo armar algo sincrónico pero tampoco algo asincrónico
+    // por lo que debo primero saber que obtener antes de hacerlo para elegir texto plano o html
+    let items = event.clipboardData.items;
+
+    let itemPlainText: string = null;
+    let itemHTMLText: string = null;
+
+    for (let i in  items) {
+      if (items[i].kind === 'string') {
+
+        if (items[i].type.match('^text/plain')) {
+          itemPlainText = i;
+        } else if (items[i].type.match('^text/html')) {
+          itemHTMLText = i;
+        }
+      }
+    }
+
+    if (!itemPlainText && !itemHTMLText)
+      return;
+
+    // Detener el comportamiento por defecto
+    event.preventDefault();
+
+    if (itemHTMLText) {
+      items[itemHTMLText].getAsString( (data) => {
+
+        // data = this.sanitizer.sanitize(SecurityContext.HTML, data);
+        data = sanitizeHtml(data, {
+                allowedTags: [ 'hr', 'ul', 'li', 'ol', 'span', 'sub', 'sup', 'p', 'div', 'b', 'i', 'em', 'strong', 'a', 'font', 'img', 'dd', 'dt', 'dl', 'blockquote', 'abbr', 'br', 'cite', 's' ],
+                allowedAttributes: {
+                  '*': [ 'align', 'alt', 'center', 'bgcolor', 'style' ],
+                  a: [ 'href', 'target' ],
+                  img: [ 'src' ],
+                },
+                allowedStyles: {
+                  '*': {
+                    // Match word color, HEX and RGB
+                    'color': [ /^[a-z]+$/, /^#(0x)?[0-9a-f]+$/i, /^rgb\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*\)$/ ],
+                    'text-align': [ /^left$/, /^right$/, /^center$/, /^justify$/ ],
+                    // Match any number with px, em, or %
+                    'font-size': [ /^\d+(?:px|em|rem|pt|%)$/ ],
+                    'font-weight': [ /^\d+$/, /^bold$/, /^bolder$/, /^normal$/, /^lighter$/ ],
+                  },
+                },
+                selfClosing: [ 'img', 'br', 'hr' ],
+              });
+
+        if (data)
+          this.editorService.insertHtml(data);
+      });
+    } else {
+      items[itemPlainText].getAsString( (data) => {
+        this.editorService.insertHtml(data);
+      });
+    }
   }
 }
