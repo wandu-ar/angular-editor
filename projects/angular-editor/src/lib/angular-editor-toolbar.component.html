@@ -138,7 +138,9 @@
     <input
       style="display: none"
       accept="image/*"
-      type="file" (change)="onFileChanged($event)"
+      type="file"
+      multiple
+      (change)="onFileChanged($event)"
       #fileInput>
     <button [id]="'insertImage-'+id" type="button" class="angular-editor-button" (click)="focus(); fileInput.click()"
             title="Insertar imagen"

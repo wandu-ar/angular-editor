@@ -29,9 +29,9 @@ export interface AngularEditorConfig {
   defaultFontName?: string;
   defaultFontSize?: '1' | '2' | '3' | '4' | '5' | '6' | '7' | string;
   uploadUrl?: string;
-  upload?: (file: File) => Observable<string>;
+  upload?: (files: Array<File>) => Promise<string[]>;
   uploadWithCredentials?: boolean;
-  attach?: () => void;
+  attach?: (files: Array<File> | undefined) => void;
   fonts?: Font[];
   customClasses?: CustomClass[];
   sanitize?: boolean;

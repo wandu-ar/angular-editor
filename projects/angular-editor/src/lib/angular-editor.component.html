@@ -18,6 +18,7 @@
           [defaultFontSize]="config.defaultFontSize"
           [hiddenButtons]="config.toolbarHiddenButtons"
           (execute)="executeCommand($event)"
+          (imagesUpload)="pasteImages($event)"
      ></angular-editor-toolbar>
 
      <div
@@ -41,6 +42,7 @@
                (blur)="onTextAreaBlur($event)"
                (click)="exec()"
                (keyup)="exec()"
+               (drop)="onDrop($event)"
                (mouseout)="onTextAreaMouseOut($event)"
           >
           </div>

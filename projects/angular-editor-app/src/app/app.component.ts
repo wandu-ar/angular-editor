@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {AngularEditorConfig} from 'angular-editor';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import { of } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -47,7 +48,21 @@ export class AppComponent implements OnInit {
     toolbarHiddenButtons: [
       ['bold', 'italic'],
       ['fontSize']
-    ]
+    ],
+      upload: async (files: File[]) => {
+
+        await this.sleep();
+        const result = [];
+        for (let i = 0; i < files.length; i++) {
+          const file = files[i];
+          result[i] = 'https://demo.redif.ar/assets/img/logos/demo.png';
+        }
+        return result;
+        // return of('https://demo.redif.ar/assets/img/logos/demo.png');
+      },
+      attach: () => {
+        console.log('attach');
+      }
   };
 
   config2: AngularEditorConfig = {
@@ -80,6 +95,12 @@ export class AppComponent implements OnInit {
   };
 
   constructor(private formBuilder: FormBuilder) {}
+
+  sleep(ms = 3000) {
+    return new Promise<void>(resolve => {
+      setTimeout(() => resolve(), ms);
+    })
+  }
 
   ngOnInit() {
     this.form = this.formBuilder.group({

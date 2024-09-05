@@ -1,5 +1,5 @@
 
-ng serve --host 10.0.0.6 --port 4204 --ssl --disableHostCheck
+ng serve --host 0.0.0.0 --port 4204 --disableHostCheck
 
 config.ts
   upload?: (file: File) => Observable<string>;

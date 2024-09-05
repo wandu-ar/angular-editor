@@ -117,7 +117,7 @@ export class AngularEditorToolbarComponent {
 
   @Input() id: string;
   @Input() uploadUrl: string;
-  @Input() upload: (file: File) => Observable<string>;
+  @Input() upload: (files: File[]) => Promise<string[]>;
   @Input() attach: () => void;
   @Input() showToolbar: boolean;
   @Input() fonts: SelectOption[] = [{label: '', value: ''}];
@@ -150,6 +150,8 @@ export class AngularEditorToolbarComponent {
   @Output() execute: EventEmitter<string> = new EventEmitter<string>();
 
   @ViewChild('fileInput', {static: true}) myInputFile: ElementRef;
+
+  @Output() imagesUpload: EventEmitter<File[]> = new EventEmitter();
 
   /*
   public get isLinkButtonDisabled(): boolean {
@@ -335,26 +337,44 @@ export class AngularEditorToolbarComponent {
   /**
    * Upload image when file is selected.
    */
-  onFileChanged(event) {
+  async onFileChanged(event) {
+    // console.log(event);
     if (!event.target.files || !event.target.files.length) return;
 
-    const file = event.target.files[0];
-    if (file.type.includes('image/')) {
-        if (this.upload) {
-          this.upload(file).subscribe( (imageUrl: string) => {
-            this.editorService.insertImage(imageUrl);
-          });
-        } else if (this.uploadUrl) {
-            this.editorService.uploadImage(file).subscribe(() => this.watchUploadImage);
-        } else {
-          const reader = new FileReader();
-          reader.onload = (e: ProgressEvent) => {
-            const fr = e.currentTarget as FileReader;
-            this.editorService.insertImage(fr.result.toString());
-          };
-          reader.readAsDataURL(file);
+    const files = event.target.files as FileList;
+
+    if (this.upload) {
+      const images = [];
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        if (file.type.includes('image/')) {
+          images.push(file);
         }
       }
+
+      this.imagesUpload.emit(images);
+
+    } else {
+      const file = files[0];
+      if (file.type.includes('image/')) {
+          if (this.upload) {
+            // await this.upload()
+            // this.upload(file).subscribe( (imageUrl: string) => {
+            //   this.editorService.insertImage(imageUrl);
+            // });
+          } else if (this.uploadUrl) {
+              this.editorService.uploadImage(file).subscribe(() => this.watchUploadImage);
+          } else {
+            const reader = new FileReader();
+            reader.onload = (e: ProgressEvent) => {
+              const fr = e.currentTarget as FileReader;
+              this.editorService.insertImage(fr.result.toString());
+            };
+            reader.readAsDataURL(file);
+          }
+        }
+    }
+
   }
 
   watchUploadImage(response: HttpResponse<{imageUrl: string}>, event) {
