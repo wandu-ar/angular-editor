@@ -118,7 +118,7 @@ export class AngularEditorToolbarComponent {
   @Input() id: string;
   @Input() uploadUrl: string;
   @Input() upload: (files: File[]) => Promise<string[]>;
-  @Input() attach: () => void;
+  @Input() attach: (files?: File[]) => void;
   @Input() showToolbar: boolean;
   @Input() fonts: SelectOption[] = [{label: '', value: ''}];
 

@@ -60,8 +60,8 @@ export class AppComponent implements OnInit {
         return result;
         // return of('https://demo.redif.ar/assets/img/logos/demo.png');
       },
-      attach: () => {
-        console.log('attach');
+      attach: (files) => {
+        console.log('attach', files);
       }
   };
 

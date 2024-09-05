@@ -515,7 +515,7 @@ export class AngularEditorComponent
     // Espero a que todas las promesas se resuelvan antes de continuar
     await Promise.all(items.map((item) => item.item));
 
-    // console.log(allItems);
+    // console.log(items);
 
     // Agrupar
     const itemGroups = {
@@ -526,18 +526,21 @@ export class AngularEditorComponent
     };
 
     for (const item of items) {
+      const content = await item.item; // la promesa ya fue resuelta
+      if (!content) continue;
+      //
       switch (item.kind) {
         case 'html':
-          itemGroups.htmlItems.push(await item.item); // están ya resueltas
+          itemGroups.htmlItems.push(content);
           break;
         case 'plainText':
-          itemGroups.plainTextItems.push(await item.item); // están ya resueltas
+          itemGroups.plainTextItems.push(content);
           break;
         case 'image':
-          itemGroups.imageItems.push(await item.item); // están ya resueltas
+          itemGroups.imageItems.push(content);
           break;
         case 'otherFile':
-          itemGroups.otherFileItems.push(await item.item); // están ya resueltas
+          itemGroups.otherFileItems.push(content);
           break;
       }
     }
@@ -550,7 +553,7 @@ export class AngularEditorComponent
     } else if (itemGroups.htmlItems.length) {
       this.pasteHTMLs(itemGroups.htmlItems);
     } else if (itemGroups.plainTextItems.length) {
-      this.pastePlainTexts(itemGroups.htmlItems);
+      this.pastePlainTexts(itemGroups.plainTextItems);
     }
 
     // Los archivos de otros tipos lo mando al final siempre a adjuntar
@@ -580,11 +583,12 @@ export class AngularEditorComponent
 
   async pasteFiles(files: File[]) {
     if (this.config.attach) {
-      this.config.upload(files);
+      this.config.attach(files);
     }
   }
 
   async pastePlainTexts(texts: string[]) {
+    this.focus();
     for (let data of texts) {
       data = this.htmlEntities(data);
       data = this.autoLink(data);
@@ -594,11 +598,13 @@ export class AngularEditorComponent
       data = data.replace(/\s/g, '&nbsp;');
       data = data + '<br>'; // añadir enter al final
       // console.log(data);
+      this.focus();
       this.editorService.insertHtml(data);
     }
   }
 
   pasteHTMLs(texts: string[]) {
+    this.focus();
     for (let data of texts) {
       // data = this.sanitizer.sanitize(SecurityContext.HTML, data);
       data = sanitizeHtml(data, {
@@ -693,11 +699,13 @@ export class AngularEditorComponent
       });
 
       // console.log(data);
+      this.focus();
       if (data) this.editorService.insertHtml(data);
     }
   }
 
   async pasteImages(files: File[]) {
+    this.focus();
     if (this.config.upload) {
       // console.log(files);
       // Show loaders
@@ -714,6 +722,7 @@ export class AngularEditorComponent
         `;
       }
       //
+      this.focus();
       this.editorService.insertHtml(html);
 
       // console.log(this.textArea.nativeElement);

@@ -24,6 +24,7 @@
      <div
         class="angular-editor-wrapper"
         #editorWrapper
+        (drop)="onDrop($event)"
         >
           <div
                #editor
@@ -42,7 +43,6 @@
                (blur)="onTextAreaBlur($event)"
                (click)="exec()"
                (keyup)="exec()"
-               (drop)="onDrop($event)"
                (mouseout)="onTextAreaMouseOut($event)"
           >
           </div>

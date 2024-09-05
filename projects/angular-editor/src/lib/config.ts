@@ -31,7 +31,7 @@ export interface AngularEditorConfig {
   uploadUrl?: string;
   upload?: (files: Array<File>) => Promise<string[]>;
   uploadWithCredentials?: boolean;
-  attach?: (files: Array<File> | undefined) => void;
+  attach?: (files?: Array<File>) => void;
   fonts?: Font[];
   customClasses?: CustomClass[];
   sanitize?: boolean;
