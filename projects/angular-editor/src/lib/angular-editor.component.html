@@ -26,6 +26,10 @@
         #editorWrapper
         (drop)="onDrop($event)"
         >
+          <!-- placeholder por detrás para no interrumpir el draggeado -->
+          <span
+            class="angular-editor-placeholder">{{ placeholder || config['placeholder'] }}</span>
+
           <div
                #editor
                class="angular-editor-textarea"
@@ -46,9 +50,6 @@
                (mouseout)="onTextAreaMouseOut($event)"
           >
           </div>
-          <span
-            (drop)="onDrop($event)"
-            class="angular-editor-placeholder">{{ placeholder || config['placeholder'] }}</span>
      </div>
      <angular-editor-toolbar
           *ngIf="config.toolbarPosition === 'bottom'"
