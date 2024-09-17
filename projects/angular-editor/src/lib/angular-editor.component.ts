@@ -547,18 +547,25 @@ export class AngularEditorComponent
 
     // console.log(itemGroups);
 
-    // Priorizo imágenes
-    if (itemGroups.imageItems.length) {
-      await this.pasteImages(itemGroups.imageItems);
-    } else if (itemGroups.htmlItems.length) {
-      this.pasteHTMLs(itemGroups.htmlItems);
-    } else if (itemGroups.plainTextItems.length) {
-      this.pastePlainTexts(itemGroups.plainTextItems);
-    }
+    if (this.modeVisual) {
+      // Priorizo imágenes
+      if (itemGroups.imageItems.length) {
+        await this.pasteImages(itemGroups.imageItems);
+      } else if (itemGroups.htmlItems.length) {
+        this.pasteHTMLs(itemGroups.htmlItems);
+      } else if (itemGroups.plainTextItems.length) {
+        this.pastePlainTexts(itemGroups.plainTextItems);
+      }
 
-    // Los archivos de otros tipos lo mando al final siempre a adjuntar
-    if (itemGroups.otherFileItems.length) {
-      await this.pasteFiles(itemGroups.otherFileItems);
+      // Los archivos de otros tipos lo mando al final siempre a adjuntar
+      if (itemGroups.otherFileItems.length) {
+        await this.pasteFiles(itemGroups.otherFileItems);
+      }
+    } else {
+      // En modo editor html, solo se acepta texto plano
+      if (itemGroups.plainTextItems.length) {
+        this.pastePlainTexts(itemGroups.plainTextItems);
+      }
     }
   }
 
@@ -589,17 +596,20 @@ export class AngularEditorComponent
 
   async pastePlainTexts(texts: string[]) {
     this.focus();
-    for (let data of texts) {
-      data = this.htmlEntities(data);
-      data = this.autoLink(data);
-      data = '<p>' + data + '</p>';
-      data = data.replace(/\n/g, '<br>');
-      data = data.replace(/\t/g, '&nbsp;&nbsp;');
-      data = data.replace(/\s/g, '&nbsp;');
-      data = data + '<br>'; // añadir enter al final
-      // console.log(data);
-      this.focus();
-      this.editorService.insertHtml(data);
+    if (this.modeVisual) {
+      for (let data of texts) {
+        data = this.htmlEntities(data);
+        data = this.autoLink(data);
+        data = '<p>' + data + '</p>';
+        data = data.replace(/\n/g, '<br>');
+        data = data.replace(/\t/g, '&nbsp;&nbsp;');
+        data = data.replace(/\s/g, '&nbsp;');
+        // data = data + '<br>'; // añadir enter al final
+        // console.log(data);
+        this.editorService.insertHtml(data);
+      }
+    } else {
+      this.editorService.insertText(texts.join("\n"));
     }
   }
 
@@ -710,17 +720,18 @@ export class AngularEditorComponent
       // console.log(files);
       // Show loaders
       const pos = this.loadingIds.push(true) - 1;
-      let html = '';
+      let html = '<br>';
       for (const i in files) {
         html += `
-          <div id="image-box-${pos}-${i}" class="d-inline-block my-2">
-            <div class="loader-container" contenteditable="false">
+          <div id="image-box-${pos}-${i}" class="loader-container my-1" contenteditable="false">
+            <div class="loader-box">
               <div class="loader"></div>
             </div>
           </div>
           <br>
         `;
       }
+
       //
       this.focus();
       this.editorService.insertHtml(html);
@@ -729,17 +740,18 @@ export class AngularEditorComponent
       const imagesUrls = await this.config.upload(files);
       for (const i in imagesUrls) {
         const imageUrl = imagesUrls[i];
-        const el = this.doc.getElementById(`image-box-${pos}-${i}`);
-        // Eliminar loader
-        while (el.firstChild) {
-          el.removeChild(el.firstChild);
-        }
-        // Insertar imagen
-        if (imageUrl) {
-          const imgNode = this.doc.createElement('img');
-          imgNode.src = imageUrl;
-          imgNode.alt = 'Image';
-          el.appendChild(imgNode);
+        const referenceElement = this.doc.getElementById(`image-box-${pos}-${i}`);
+        if (referenceElement) {
+          const parentElement = referenceElement.parentElement;
+          // Insertar imagen antes de borrar
+          if (imageUrl) {
+            const imgNode = this.doc.createElement('img');
+            imgNode.src = imageUrl;
+            imgNode.alt = 'Image';
+            parentElement.insertBefore(imgNode, referenceElement);
+          }
+          // Eliminar loader y contenido
+          referenceElement.remove();
         }
       }
     }

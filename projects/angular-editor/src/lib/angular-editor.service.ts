@@ -95,6 +95,19 @@ export class AngularEditorService {
   }
 
   /**
+   * Create raw plain text
+   * @param html text string
+   */
+  insertText(html: string): void {
+
+    const isInserted = this.doc.execCommand('insertText', false, html);
+
+    if (!isInserted) {
+      throw new Error('Unable to perform the operation');
+    }
+  }
+
+  /**
    * save selection when the editor is focussed out
    */
   public saveSelection = (): void => {
