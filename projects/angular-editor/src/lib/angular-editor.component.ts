@@ -450,16 +450,24 @@ export class AngularEditorComponent
     return html;
   }
 
-  onDrop(event: DragEvent) {
+  async onDrop(event: DragEvent) {
     // Detener el comportamiento por defecto
     event.preventDefault();
-    this.processDataTransfer(event.dataTransfer);
+    try {
+      await this.processDataTransfer(event.dataTransfer);
+    } finally {
+      this.emitChanges();
+    }
   }
 
-  onPaste(event: ClipboardEvent) {
+  async onPaste(event: ClipboardEvent) {
     // Detener el comportamiento por defecto
     event.preventDefault();
-    this.processDataTransfer(event.clipboardData);
+    try {
+      await this.processDataTransfer(event.clipboardData);
+    } finally {
+      this.emitChanges();
+    }
   }
 
   /**
@@ -953,5 +961,9 @@ export class AngularEditorComponent
     return text.replace(urlRegex, (url) => {
       return `<a href="${url}" target="_blank">${url}</a>`;
     });
+  }
+
+  emitChanges() {
+    this.onContentChange(this.textArea.nativeElement);
   }
 }

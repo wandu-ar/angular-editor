@@ -51,7 +51,7 @@ export class AppComponent implements OnInit {
     ],
       upload: async (files: File[]) => {
 
-        await this.sleep(99999999999);
+        await this.sleep(3000);
         const result = [];
         for (let i = 0; i < files.length; i++) {
           const file = files[i];
