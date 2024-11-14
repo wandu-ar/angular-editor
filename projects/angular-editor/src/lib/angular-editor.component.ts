@@ -605,16 +605,20 @@ export class AngularEditorComponent
   async pastePlainTexts(texts: string[]) {
     this.focus();
     if (this.modeVisual) {
-      for (let data of texts) {
-        data = this.htmlEntities(data);
-        data = this.autoLink(data);
-        data = '<p>' + data + '</p>';
-        data = data.replace(/\n/g, '<br>');
-        data = data.replace(/\t/g, '&nbsp;&nbsp;');
-        data = data.replace(/\s/g, '&nbsp;');
-        // data = data + '<br>'; // añadir enter al final
-        // console.log(data);
-        this.editorService.insertHtml(data);
+      for (let rawText of texts) {
+        let { links, text } = this.recognizer(rawText);
+        text = this.htmlEntities(text);
+        text = '<p>' + text + '</p>';
+        text = text.replace(/\n/g, '<br>');
+        text = text.replace(/\t/g, '&nbsp;&nbsp;');
+        text = text.replace(/\s/g, '&nbsp;');
+        // text = text + '<br>'; // añadir enter al final
+        // Rearmar links
+        for (const [key, value] of links) {
+          text = text.replace(key, value);
+        }
+        // console.log(text);
+        this.editorService.insertHtml(text);
       }
     } else {
       this.editorService.insertText(texts.join("\n"));
@@ -956,11 +960,25 @@ export class AngularEditorComponent
     return hashMap;
   }
 
-  autoLink(text: string): string {
-    const urlRegex = /(\bhttps?:\/\/[^\s]+[^\s.,;!?])/g;
-    return text.replace(urlRegex, (url) => {
-      return `<a href="${url}" target="_blank">${url}</a>`;
-    });
+  recognizer(text: string): { text: string; links: Map<string, string>} {
+    const regex = /(\bhttps?:\/\/[^\s]+[^\s.,;!?])/g;
+    const links: Map<string, string> = new Map();
+    let m: RegExpExecArray | null;
+    while ((m = regex.exec(text)) !== null) {
+      // This is necessary to avoid infinite loops with zero-width matches
+      if (m.index === regex.lastIndex) {
+          regex.lastIndex++;
+      }
+
+      // The result can be accessed through the `m`-variable.
+      for (let i = 1; i < m.length; i++) {
+        let template = `__LINK(${links.size})__`;
+        links.set(template, `<a href="${m[i]}" target="_blank">${m[i]}</a>`);
+        text = text.replace(m[i], template);
+      }
+    }
+    // console.log(links);
+    return { text, links };
   }
 
   emitChanges() {
