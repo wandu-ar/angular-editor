@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 import { AngularEditorConfig } from 'projects/angular-editor/src/lib/config';
 import { of } from 'rxjs';
 
@@ -11,7 +11,7 @@ import { of } from 'rxjs';
 export class AppComponent implements OnInit {
   title = 'app';
 
-  form: FormGroup;
+  form: UntypedFormGroup;
 
   htmlContent1 = '';
   htmlContent2 = '';
@@ -95,7 +95,7 @@ export class AppComponent implements OnInit {
     ]
   };
 
-  constructor(private formBuilder: FormBuilder) {}
+  constructor(private formBuilder: UntypedFormBuilder) {}
 
   sleep(ms = 3000) {
     return new Promise<void>(resolve => {
