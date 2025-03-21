@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
-import {AngularEditorConfig} from 'angular-editor';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import { AngularEditorConfig } from 'projects/angular-editor/src/lib/config';
 import { of } from 'rxjs';
 
 @Component({
@@ -55,6 +55,7 @@ export class AppComponent implements OnInit {
         const result = [];
         for (let i = 0; i < files.length; i++) {
           const file = files[i];
+          console.log(`Imagen cargada: ${file.name}`);
           result[i] = 'https://demo.redif.ar/assets/img/logos/demo.png';
         }
         return result;
