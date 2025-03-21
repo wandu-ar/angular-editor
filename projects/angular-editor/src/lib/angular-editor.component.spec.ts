@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed, waitForAsync} from '@angular/core/testing';
+import { async, ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {AngularEditorComponent} from './angular-editor.component';
 import {AngularEditorToolbarComponent} from './angular-editor-toolbar.component';
