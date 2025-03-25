@@ -1,6 +1,6 @@
 import {Component, ElementRef, EventEmitter, Inject, Input, Output, Renderer2, ViewChild} from '@angular/core';
 import {AngularEditorService, UploadResponse} from './angular-editor.service';
-import {HttpResponse, HttpEvent} from '@angular/common/http';
+import { HttpResponse, HttpEvent } from '@angular/common/http';
 import {DOCUMENT} from '@angular/common';
 import {CustomClass} from './config';
 import {SelectOption} from './ae-select/ae-select.component';
