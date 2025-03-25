@@ -29,17 +29,18 @@ import { isDefined } from './utils';
 // import * as sanitizeHtml from 'sanitize-html';
 
 @Component({
-  selector: 'angular-editor',
-  templateUrl: './angular-editor.component.html',
-  styleUrls: ['./angular-editor.component.scss'],
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => AngularEditorComponent),
-      multi: true,
-    },
-    AngularEditorService,
-  ],
+    selector: 'angular-editor',
+    templateUrl: './angular-editor.component.html',
+    styleUrls: ['./angular-editor.component.scss'],
+    providers: [
+        {
+            provide: NG_VALUE_ACCESSOR,
+            useExisting: forwardRef(() => AngularEditorComponent),
+            multi: true,
+        },
+        AngularEditorService,
+    ],
+    standalone: false
 })
 export class AngularEditorComponent
   implements OnInit, ControlValueAccessor, AfterViewInit, OnDestroy

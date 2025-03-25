@@ -7,9 +7,10 @@ import {SelectOption} from './ae-select/ae-select.component';
 import { Observable } from 'rxjs';
 
 @Component({
-  selector: 'angular-editor-toolbar',
-  templateUrl: './angular-editor-toolbar.component.html',
-  styleUrls: ['./angular-editor-toolbar.component.scss'],
+    selector: 'angular-editor-toolbar',
+    templateUrl: './angular-editor-toolbar.component.html',
+    styleUrls: ['./angular-editor-toolbar.component.scss'],
+    standalone: false
 })
 
 export class AngularEditorToolbarComponent {
