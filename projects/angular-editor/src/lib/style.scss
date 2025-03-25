@@ -1,5 +1,4 @@
-$fa-font-path: "https://netdna.bootstrapcdn.com/font-awesome/4.7.0/fonts" !default; // for referencing Bootstrap CDN font files directly
-@import "font-awesome/scss/font-awesome.scss";
+@import "https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css";
 
 a {
   cursor: pointer;
