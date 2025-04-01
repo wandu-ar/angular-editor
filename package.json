@@ -1,6 +1,6 @@
 {
   "name": "@kolkov/angular-editor",
-  "version": "1.2.3",
+  "version": "12.0.2",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -13,6 +13,7 @@
     "test:lib": "ng test angular-editor",
     "build:lib": "ng build angular-editor",
     "build-prod:lib": "ng build angular-editor --configuration production && rm -f ./dist/angular-editor.tgz && tar czf ./dist/angular-editor.tgz -C ./dist/ angular-editor/",
+    "deploy:internal": "npm run build-prod:lib && cp -f dist/angular-editor.tgz ../redif-webapp/vendor/angular-editor-v12.tgz",
     "publish:lib": "npm run copy:readme && npm run copy:changelog && npm run copy:license && npm publish ./dist/angular-editor --tag next",
     "copy:readme": "cpx README.md dist/angular-editor",
     "copy:changelog": "cpx CHANGELOG.md dist/kolkov/angular-editor",
