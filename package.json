@@ -1,6 +1,6 @@
 {
   "name": "@kolkov/angular-editor",
-  "version": "1.2.3",
+  "version": "13.0.1",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -13,6 +13,7 @@
     "test:lib": "ng test angular-editor",
     "build:lib": "ng build angular-editor",
     "build-prod:lib": "ng build angular-editor --configuration production && rm -f ./dist/angular-editor.tgz && tar czf ./dist/angular-editor.tgz -C ./dist/ angular-editor/",
+    "deploy:internal": "npm run build-prod:lib && cp -f dist/angular-editor.tgz ../redif-webapp/vendor/angular-editor-v13.tgz",
     "publish:lib": "npm run copy:readme && npm run copy:changelog && npm run copy:license && npm publish ./dist/angular-editor --tag next",
     "copy:readme": "cpx README.md dist/angular-editor",
     "copy:changelog": "cpx CHANGELOG.md dist/kolkov/angular-editor",
@@ -45,7 +46,7 @@
     "codelyzer": "^6.0.0",
     "coveralls": "^3.1.0",
     "cpx": "^1.5.0",
-    "jasmine-core": "~3.6.0",
+    "jasmine-core": "~3.8.0",
     "jasmine-spec-reporter": "~5.0.0",
     "karma": "~6.4.4",
     "karma-chrome-launcher": "~3.1.0",
