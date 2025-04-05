@@ -1,7 +1,15 @@
 {
   "name": "angular-editor",
-  "version": "19.0.1",
+  "version": "19.0.2",
   "dependencies": {
     "tslib": "^2.0.0"
+  },
+  "peerDependencies": {
+    "@angular/common": ">=19 <20",
+    "@angular/core": ">=19 <20",
+    "@angular/forms": ">=19 <20",
+    "@angular/platform-browser": ">=19 <20",
+    "rxjs": "^6.5.3 || ^7.4.0",
+    "sanitize-html": "^2.15.0"
   }
 }
