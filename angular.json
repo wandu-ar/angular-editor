@@ -33,6 +33,16 @@
             "tsConfig": "projects/angular-editor/tsconfig.spec.json",
             "karmaConfig": "projects/angular-editor/karma.conf.js"
           }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "projects/angular-editor/**/*.ts",
+              "projects/angular-editor/**/*.html"
+            ],
+            "eslintConfig": "projects/angular-editor/eslint.config.js"
+          }
         }
       }
     },
@@ -54,13 +64,17 @@
               "base": "dist/angular-editor-app"
             },
             "index": "projects/angular-editor-app/src/index.html",
-            "polyfills": ["projects/angular-editor-app/src/polyfills.ts"],
+            "polyfills": [
+              "projects/angular-editor-app/src/polyfills.ts"
+            ],
             "tsConfig": "projects/angular-editor-app/tsconfig.app.json",
             "assets": [
               "projects/angular-editor-app/src/favicon.ico",
               "projects/angular-editor-app/src/assets"
             ],
-            "styles": ["projects/angular-editor-app/src/styles.scss"],
+            "styles": [
+              "projects/angular-editor-app/src/styles.scss"
+            ],
             "scripts": [],
             "extractLicenses": false,
             "sourceMap": true,
@@ -124,7 +138,9 @@
               "projects/angular-editor-app/src/favicon.ico",
               "projects/angular-editor-app/src/assets"
             ],
-            "styles": ["projects/angular-editor-app/src/styles.css"],
+            "styles": [
+              "projects/angular-editor-app/src/styles.css"
+            ],
             "scripts": []
           }
         },
@@ -139,11 +155,18 @@
               "devServerTarget": "angular-editor-app:serve:production"
             }
           }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "projects/angular-editor-app/**/*.ts",
+              "projects/angular-editor-app/**/*.html"
+            ],
+            "eslintConfig": "projects/angular-editor-app/eslint.config.js"
+          }
         }
       }
     }
-  },
-  "cli": {
-    "analytics": "fbddda2f-258b-4004-8062-d701809d0a1c"
   }
 }
