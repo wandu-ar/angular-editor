@@ -14,7 +14,6 @@ import {
   OnInit,
   Output,
   Renderer2,
-  Sanitizer,
   SecurityContext,
   ViewChild,
 } from '@angular/core';
@@ -26,21 +25,21 @@ import { DOCUMENT } from '@angular/common';
 import { DomSanitizer } from '@angular/platform-browser';
 import { isDefined } from './utils';
 
-import * as sanitizeHtml from 'sanitize-html';
+// import * as sanitizeHtml from 'sanitize-html';
 
 @Component({
-    selector: 'angular-editor',
-    templateUrl: './angular-editor.component.html',
-    styleUrls: ['./angular-editor.component.scss'],
-    providers: [
-        {
-            provide: NG_VALUE_ACCESSOR,
-            useExisting: forwardRef(() => AngularEditorComponent),
-            multi: true,
-        },
-        AngularEditorService,
-    ],
-    standalone: false
+  selector: 'angular-editor',
+  templateUrl: './angular-editor.component.html',
+  styleUrls: ['./angular-editor.component.scss'],
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => AngularEditorComponent),
+      multi: true,
+    },
+    AngularEditorService,
+  ],
+  standalone: false,
 })
 export class AngularEditorComponent
   implements OnInit, ControlValueAccessor, AfterViewInit, OnDestroy
@@ -622,111 +621,110 @@ export class AngularEditorComponent
         this.editorService.insertHtml(text);
       }
     } else {
-      this.editorService.insertText(texts.join("\n"));
+      this.editorService.insertText(texts.join('\n'));
+      console.log(texts);
     }
   }
 
   pasteHTMLs(texts: string[]) {
     this.focus();
     for (let data of texts) {
-      data = sanitizeHtml.default(data, {
-        allowedTags: [
-          'h1',
-          'h2',
-          'h3',
-          'h4',
-          'h5',
-          'h6',
-          'hr',
-          'ul',
-          'li',
-          'ol',
-          'span',
-          'sub',
-          'sup',
-          'p',
-          'div',
-          'b',
-          'i',
-          'em',
-          'strong',
-          'a',
-          'font',
-          'img',
-          'dd',
-          'dt',
-          'dl',
-          'blockquote',
-          'abbr',
-          'br',
-          'cite',
-          's',
-          'strike',
-          'stroke',
-          'u',
-        ],
-        allowedAttributes: {
-          '*': ['align', 'size', 'center', 'bgcolor', 'style'],
-          img: ['src'], // Permitir solo ciertos atributos en img
-          a: ['href', 'target'],
-        },
-        allowedStyles: {
-          '*': {
-            // Match word color, HEX and RGB
-            color: [
-              /^[a-z]+$/,
-              /^#(0x)?[0-9a-f]+$/i,
-              /^rgb\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*\)$/,
-            ],
-            'text-decoration': [/^.*$/],
-            'text-align': [/^left$/, /^right$/, /^center$/, /^justify$/],
-            // Match any number with px, em, or %
-            'font-size': [/^\d+(?:px|em|rem|pt|%)$/],
-            'font-weight': [/^\d+$/, /^bold$/, /^bolder$/, /^normal$/, /^lighter$/],
-          },
-        },
-        selfClosing: ['img', 'br', 'hr'],
-        transformTags: {
-          a: (tagName, attribs) => {
-            return {
-              tagName,
-              attribs: {
-                ...attribs,
-                target: '_blank',
-              },
-            };
-          },
-          img: (tagName, attribs) => {
-            if (attribs.src && attribs.src.toLowerCase().startsWith('data:')) {
-              return {
-                tagName: '', // Puedes cambiar la etiqueta a algo más o simplemente eliminarla
-                attribs: {},
-              };
-            }
-            return {
-              tagName,
-              attribs: {
-                ...attribs,
-                alt: 'Image'
-              },
-            };
-          },
-          h1: (tagName, attribs) => ({ tagName: 'p', attribs: { ...attribs, size: '7' } }),
-          h2: (tagName, attribs) => ({ tagName: 'p', attribs: { ...attribs, size: '6' } }),
-          h3: (tagName, attribs) => ({ tagName: 'p', attribs: { ...attribs, size: '5' } }),
-          h4: (tagName, attribs) => ({ tagName: 'p', attribs: { ...attribs, size: '4' } }),
-          h5: (tagName, attribs) => ({ tagName: 'p', attribs: { ...attribs, size: '3' } }),
-          h6: (tagName, attribs) => ({ tagName: 'p', attribs: { ...attribs, size: '3' } }),
-        },
-      });
+      // data = sanitizeHtml.default(data, {
+      //   allowedTags: [
+      //     'h1',
+      //     'h2',
+      //     'h3',
+      //     'h4',
+      //     'h5',
+      //     'h6',
+      //     'hr',
+      //     'ul',
+      //     'li',
+      //     'ol',
+      //     'span',
+      //     'sub',
+      //     'sup',
+      //     'p',
+      //     'div',
+      //     'b',
+      //     'i',
+      //     'em',
+      //     'strong',
+      //     'a',
+      //     'font',
+      //     'img',
+      //     'dd',
+      //     'dt',
+      //     'dl',
+      //     'blockquote',
+      //     'abbr',
+      //     'br',
+      //     'cite',
+      //     's',
+      //     'strike',
+      //     'stroke',
+      //     'u',
+      //   ],
+      //   allowedAttributes: {
+      //     '*': ['align', 'size', 'center', 'bgcolor', 'style'],
+      //     img: ['src'], // Permitir solo ciertos atributos en img
+      //     a: ['href', 'target'],
+      //   },
+      //   allowedStyles: {
+      //     '*': {
+      //       // Match word color, HEX and RGB
+      //       color: [
+      //         /^[a-z]+$/,
+      //         /^#(0x)?[0-9a-f]+$/i,
+      //         /^rgb\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*\)$/,
+      //       ],
+      //       'text-decoration': [/^.*$/],
+      //       'text-align': [/^left$/, /^right$/, /^center$/, /^justify$/],
+      //       // Match any number with px, em, or %
+      //       'font-size': [/^\d+(?:px|em|rem|pt|%)$/],
+      //       'font-weight': [/^\d+$/, /^bold$/, /^bolder$/, /^normal$/, /^lighter$/],
+      //     },
+      //   },
+      //   selfClosing: ['img', 'br', 'hr'],
+      //   transformTags: {
+      //     a: (tagName, attribs) => {
+      //       return {
+      //         tagName,
+      //         attribs: {
+      //           ...attribs,
+      //           target: '_blank',
+      //         },
+      //       };
+      //     },
+      //     img: (tagName, attribs) => {
+      //       if (attribs.src && attribs.src.toLowerCase().startsWith('data:')) {
+      //         return {
+      //           tagName: '', // Puedes cambiar la etiqueta a algo más o simplemente eliminarla
+      //           attribs: {},
+      //         };
+      //       }
+      //       return {
+      //         tagName,
+      //         attribs: {
+      //           ...attribs,
+      //           alt: 'Image',
+      //         },
+      //       };
+      //     },
+      //     h1: (tagName, attribs) => ({ tagName: 'p', attribs: { ...attribs, size: '7' } }),
+      //     h2: (tagName, attribs) => ({ tagName: 'p', attribs: { ...attribs, size: '6' } }),
+      //     h3: (tagName, attribs) => ({ tagName: 'p', attribs: { ...attribs, size: '5' } }),
+      //     h4: (tagName, attribs) => ({ tagName: 'p', attribs: { ...attribs, size: '4' } }),
+      //     h5: (tagName, attribs) => ({ tagName: 'p', attribs: { ...attribs, size: '3' } }),
+      //     h6: (tagName, attribs) => ({ tagName: 'p', attribs: { ...attribs, size: '3' } }),
+      //   },
+      // });
 
       // console.log(data);
       this.focus();
       if (data) this.editorService.insertHtml(data);
     }
   }
-
-
 
   async pasteImages(files: File[]) {
     this.focus();
@@ -830,14 +828,14 @@ export class AngularEditorComponent
     useTable = !isNaN(table)
       ? constMappingTable[table]
       : table
-      ? table.toUpperCase()
-      : 'HTML_SPECIALCHARS';
+        ? table.toUpperCase()
+        : 'HTML_SPECIALCHARS';
 
     useQuoteStyle = !isNaN(quoteStyle)
       ? constMappingQuoteStyle[quoteStyle]
       : quoteStyle
-      ? quoteStyle.toUpperCase()
-      : 'ENT_COMPAT';
+        ? quoteStyle.toUpperCase()
+        : 'ENT_COMPAT';
 
     if (useTable !== 'HTML_SPECIALCHARS' && useTable !== 'HTML_ENTITIES') {
       throw new Error('Table: ' + useTable + ' not supported');
@@ -962,14 +960,14 @@ export class AngularEditorComponent
     return hashMap;
   }
 
-  recognizer(text: string): { text: string; links: Map<string, string>} {
+  recognizer(text: string): { text: string; links: Map<string, string> } {
     const regex = /(\bhttps?:\/\/[^\s]+[^\s.,;!?])/g;
     const links: Map<string, string> = new Map();
     let m: RegExpExecArray | null;
     while ((m = regex.exec(text)) !== null) {
       // This is necessary to avoid infinite loops with zero-width matches
       if (m.index === regex.lastIndex) {
-          regex.lastIndex++;
+        regex.lastIndex++;
       }
 
       // The result can be accessed through the `m`-variable.
