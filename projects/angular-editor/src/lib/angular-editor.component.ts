@@ -24,8 +24,7 @@ import { AngularEditorService } from './angular-editor.service';
 import { DOCUMENT } from '@angular/common';
 import { DomSanitizer } from '@angular/platform-browser';
 import { isDefined } from './utils';
-
-// import * as sanitizeHtml from 'sanitize-html';
+import xss, { IFilterXSSOptions } from 'xss';
 
 @Component({
   selector: 'angular-editor',
@@ -86,27 +85,6 @@ export class AngularEditorComponent
   onFocus() {
     this.focus();
   }
-
-  // @HostListener('drop', ['$event'])
-  // onDrop(event: DragEvent) {
-  //   event.preventDefault();
-  //   console.log(event.dataTransfer);
-  //   console.log('Files lenght:', event.dataTransfer.files.length);
-  //   console.log('Items lenght:', event.dataTransfer.items.length);
-  //   const droppedText = event.dataTransfer?.getData('text');
-  //   console.log(droppedText);
-  //   for (let i = 0; i < event.dataTransfer.items.length; i++) {
-  //     const item = event.dataTransfer.items[i];
-  //     item.getAsString((text) => {
-  //       console.log('Dropped item:', item, item.kind, item.type, droppedText);
-  //     })
-  //   }
-
-  //   for (let i = 0; i < event.dataTransfer.files.length; i++) {
-  //     const item = event.dataTransfer.files[i];
-  //     console.log('Dropped item:', item, item.type, droppedText);
-  //   }
-  // }
 
   constructor(
     private r: Renderer2,
@@ -622,105 +600,143 @@ export class AngularEditorComponent
       }
     } else {
       this.editorService.insertText(texts.join('\n'));
-      console.log(texts);
     }
   }
 
   pasteHTMLs(texts: string[]) {
-    this.focus();
-    for (let data of texts) {
-      // data = sanitizeHtml.default(data, {
-      //   allowedTags: [
-      //     'h1',
-      //     'h2',
-      //     'h3',
-      //     'h4',
-      //     'h5',
-      //     'h6',
-      //     'hr',
-      //     'ul',
-      //     'li',
-      //     'ol',
-      //     'span',
-      //     'sub',
-      //     'sup',
-      //     'p',
-      //     'div',
-      //     'b',
-      //     'i',
-      //     'em',
-      //     'strong',
-      //     'a',
-      //     'font',
-      //     'img',
-      //     'dd',
-      //     'dt',
-      //     'dl',
-      //     'blockquote',
-      //     'abbr',
-      //     'br',
-      //     'cite',
-      //     's',
-      //     'strike',
-      //     'stroke',
-      //     'u',
-      //   ],
-      //   allowedAttributes: {
-      //     '*': ['align', 'size', 'center', 'bgcolor', 'style'],
-      //     img: ['src'], // Permitir solo ciertos atributos en img
-      //     a: ['href', 'target'],
-      //   },
-      //   allowedStyles: {
-      //     '*': {
-      //       // Match word color, HEX and RGB
-      //       color: [
-      //         /^[a-z]+$/,
-      //         /^#(0x)?[0-9a-f]+$/i,
-      //         /^rgb\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*\)$/,
-      //       ],
-      //       'text-decoration': [/^.*$/],
-      //       'text-align': [/^left$/, /^right$/, /^center$/, /^justify$/],
-      //       // Match any number with px, em, or %
-      //       'font-size': [/^\d+(?:px|em|rem|pt|%)$/],
-      //       'font-weight': [/^\d+$/, /^bold$/, /^bolder$/, /^normal$/, /^lighter$/],
-      //     },
-      //   },
-      //   selfClosing: ['img', 'br', 'hr'],
-      //   transformTags: {
-      //     a: (tagName, attribs) => {
-      //       return {
-      //         tagName,
-      //         attribs: {
-      //           ...attribs,
-      //           target: '_blank',
-      //         },
-      //       };
-      //     },
-      //     img: (tagName, attribs) => {
-      //       if (attribs.src && attribs.src.toLowerCase().startsWith('data:')) {
-      //         return {
-      //           tagName: '', // Puedes cambiar la etiqueta a algo más o simplemente eliminarla
-      //           attribs: {},
-      //         };
-      //       }
-      //       return {
-      //         tagName,
-      //         attribs: {
-      //           ...attribs,
-      //           alt: 'Image',
-      //         },
-      //       };
-      //     },
-      //     h1: (tagName, attribs) => ({ tagName: 'p', attribs: { ...attribs, size: '7' } }),
-      //     h2: (tagName, attribs) => ({ tagName: 'p', attribs: { ...attribs, size: '6' } }),
-      //     h3: (tagName, attribs) => ({ tagName: 'p', attribs: { ...attribs, size: '5' } }),
-      //     h4: (tagName, attribs) => ({ tagName: 'p', attribs: { ...attribs, size: '4' } }),
-      //     h5: (tagName, attribs) => ({ tagName: 'p', attribs: { ...attribs, size: '3' } }),
-      //     h6: (tagName, attribs) => ({ tagName: 'p', attribs: { ...attribs, size: '3' } }),
-      //   },
-      // });
+    const commonAttr: Array<string> = [
+      'align',
+      'valign',
+      'size',
+      'center',
+      'bgcolor',
+      'style',
+      'border',
+      'width',
+      'height',
+    ];
+    const whiteList = {
+      h1: commonAttr,
+      h2: commonAttr,
+      h3: commonAttr,
+      h4: commonAttr,
+      h5: commonAttr,
+      h6: commonAttr,
+      hr: commonAttr,
+      ul: commonAttr,
+      ol: commonAttr,
+      li: commonAttr,
+      span: commonAttr,
+      sub: commonAttr,
+      sup: commonAttr,
+      p: commonAttr,
+      div: commonAttr,
+      b: commonAttr,
+      i: commonAttr,
+      em: commonAttr,
+      strong: commonAttr,
+      a: [...commonAttr, 'href', 'target'],
+      font: commonAttr,
+      img: [...commonAttr, 'src', 'alt'],
+      dd: commonAttr,
+      dt: commonAttr,
+      dl: commonAttr,
+      blockquote: commonAttr,
+      abbr: commonAttr,
+      br: commonAttr,
+      cite: commonAttr,
+      s: commonAttr,
+      strike: commonAttr,
+      stroke: commonAttr,
+      u: commonAttr,
+      table: [...commonAttr, 'cellpadding', 'cellspacing'],
+      th: [...commonAttr, 'colspan', 'rowspan'],
+      td: [...commonAttr, 'colspan', 'rowspan'],
+      thead: commonAttr,
+      tbody: commonAttr,
+      tfooter: commonAttr,
+      tr: commonAttr,
+      caption: commonAttr,
+    };
 
-      // console.log(data);
+    const optionsFilterStructure: IFilterXSSOptions = {
+      whiteList,
+      allowCommentTag: false,
+      singleQuotedAttributeValue: false,
+      stripIgnoreTag: true,
+      stripIgnoreTagBody: ['script', 'style'],
+      onTag(tag, html, options) {
+        if (tag.match(/h[1-6]/) && options.isClosing) return '</p>';
+        switch (tag) {
+          case 'h1':
+            return html.replace(tag, 'p size="7"');
+          case 'h2':
+            return html.replace(tag, 'p size="6"');
+          case 'h3':
+            return html.replace(tag, 'p size="5"');
+          case 'h4':
+            return html.replace(tag, 'p size="4"');
+          case 'h5':
+            return html.replace(tag, 'p size="3"');
+          case 'h6':
+            return html.replace(tag, 'p size="3"');
+        }
+
+        if (tag === 'img' && html.toLowerCase().includes('data:')) {
+          return '';
+        }
+      },
+      onTagAttr(tag, name, value, isWhiteAttr) {
+        if (tag === 'a' && name === 'target') {
+          return `${name}="_blank"`;
+        }
+      },
+    };
+
+    const optionsFilterStyles: IFilterXSSOptions = {
+      whiteList,
+      css: {
+        whiteList: {
+          // Propiedades de texto y tipografía
+          // 'font-family': true, // Define la fuente utilizada.
+          'font-size': true, // Tamaño del texto.
+          'font-weight': true, // Grosor del texto (normal, bold, etc.).
+          'font-style': true, // Estilo del texto (normal, italic, etc.).
+          'line-height': true, // Altura de línea para el espaciado vertical.
+          'letter-spacing': true, // Espaciado entre letras.
+          'word-spacing': true, // Espaciado entre palabras.
+          'text-align': true, // Alineación del texto (left, center, right, justify).
+          'text-transform': true, // Transformación del texto (uppercase, lowercase, capitalize).
+          'text-decoration': true, // Decoración del texto (underline, line-through, etc.).
+          color: true, // Color del texto.
+          'white-space': true, // Cómo se maneja el espacio en blanco (normal, nowrap, pre, etc.).
+
+          // Propiedades de fondo - Ninguno
+          'background-color': true, // Color de fondo de cajas o texto resaltado
+
+          // Propiedades de borde
+          border: true, // Define el borde completo (ancho, estilo, color).
+          'border-width': true, // Ancho del borde.
+          'border-style': true, // Estilo del borde (solid, dashed, dotted, etc.).
+          'border-color': true, // Color del borde.
+          'border-radius': true, // Bordes redondeados.
+
+          // Propiedades de espaciado
+          margin: true, // Espacio exterior alrededor del elemento.
+          padding: true, // Espacio interior entre el contenido y el borde del elemento.
+          'text-indent': true, // Sangría del texto.
+          'vertical-align': true, // Alineación vertical del texto en línea o celda.
+          width: true,
+          height: true,
+        },
+      },
+    };
+
+    this.focus();
+
+    for (let data of texts) {
+      data = xss(data, optionsFilterStructure);
+      data = xss(data, optionsFilterStyles);
       this.focus();
       if (data) this.editorService.insertHtml(data);
     }

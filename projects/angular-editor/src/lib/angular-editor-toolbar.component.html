@@ -133,7 +133,7 @@
     </button>
     <button [id]="'unlink-'+id" type="button" class="angular-editor-button" (click)="triggerCommand('unlink')"
             title="Quitar vínculo" [disabled]="htmlMode || !linkSelected" [hidden]="isButtonHidden('unlink')" tabindex="-1">
-      <i class="far fa-chain-broken"></i>
+      <i class="far fa-unlink"></i>
     </button>
     <input
       style="display: none"
@@ -149,7 +149,7 @@
     <button [id]="'insertVideo-'+id" type="button" class="angular-editor-button"
             (click)="insertVideo()" title="Insertar video" [disabled]="htmlMode" [hidden]="isButtonHidden('insertVideo')"
             tabindex="-1"><i
-      class="far fa-video-camera"></i></button>
+      class="far fa-video"></i></button>
 
     <button
       id=""
@@ -171,7 +171,7 @@
   <div class="angular-editor-toolbar-set">
     <button [id]="'clearFormatting-'+id" type="button" title="Quitar formato" class="angular-editor-button"
             (click)="triggerCommand('removeFormat')" [disabled]="htmlMode" [hidden]="isButtonHidden('removeFormat')"
-            tabindex="-1"><i class='far fa-remove'></i>
+            tabindex="-1"><i class='far fa-remove-format'></i>
     </button>
   </div>
   <div class="angular-editor-toolbar-set">

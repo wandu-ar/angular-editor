@@ -1,6 +1,6 @@
 {
   "name": "angular-editor",
-  "version": "19.0.3",
+  "version": "19.0.4",
   "dependencies": {
     "tslib": "^2.0.0"
   },
@@ -9,6 +9,7 @@
     "@angular/core": ">=19 <20",
     "@angular/forms": ">=19 <20",
     "@angular/platform-browser": ">=19 <20",
-    "rxjs": "^6.5.3 || ^7.4.0"
+    "rxjs": "^6.5.3 || ^7.4.0",
+    "xss": "^1.0.15"
   }
 }

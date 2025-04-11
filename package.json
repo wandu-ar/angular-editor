@@ -1,6 +1,6 @@
 {
   "name": "angular-editor",
-  "version": "19.0.3",
+  "version": "19.0.4",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -29,6 +29,7 @@
     "@angular/router": "^19.2.3",
     "rxjs": "~7.8.0",
     "tslib": "^2.0.0",
+    "xss": "^1.0.15",
     "zone.js": "~0.15.0"
   },
   "devDependencies": {
