@@ -51,12 +51,14 @@
           >
           </div>
      </div>
+
      <angular-editor-toolbar
           *ngIf="config.toolbarPosition === 'bottom'"
           #editorToolbar
           [id]="id"
           [uploadUrl]="config.uploadUrl"
           [upload]="config.upload"
+          [attach]="config.attach"
           [showToolbar]="config.showToolbar !== undefined ? config.showToolbar : true"
           [fonts]="getFonts()"
           [customClasses]="config.customClasses"
@@ -64,5 +66,6 @@
           [defaultFontSize]="config.defaultFontSize"
           [hiddenButtons]="config.toolbarHiddenButtons"
           (execute)="executeCommand($event)"
+          (imagesUpload)="pasteImages($event)"
      ></angular-editor-toolbar>
 </div>
