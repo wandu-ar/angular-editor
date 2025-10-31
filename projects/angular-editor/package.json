@@ -1,6 +1,6 @@
 {
   "name": "angular-editor",
-  "version": "19.0.4",
+  "version": "19.0.5",
   "dependencies": {
     "tslib": "^2.0.0"
   },
